@@ -1,7 +1,7 @@
 package com.example.reminder.domain
 // редактируем элемент из списка
-class EditeNoticeItemUseCase {
+class EditeNoticeItemUseCase(private val noticeListRepository: NoticeListRepository) {
     fun editNoticeItem(noticeItem: NoticeItem){
-        TODO()
+        noticeListRepository.editNoticeItem(noticeItem)
     }
 }
