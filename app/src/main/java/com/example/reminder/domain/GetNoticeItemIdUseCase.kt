@@ -1,7 +1,7 @@
 package com.example.reminder.domain
 // получаем записку по id
-class GetNoticeItemIdUseCase {
+class GetNoticeItemIdUseCase(private val noticeListRepository: NoticeListRepository) {
     fun getNoticeItemId(noticeItemId: Int): NoticeItem {
-        TODO()
+        return noticeListRepository.getNoticeItemId(noticeItemId)
     }
 }

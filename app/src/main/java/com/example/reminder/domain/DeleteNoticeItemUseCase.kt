@@ -1,7 +1,7 @@
 package com.example.reminder.domain
 //удаляем элемент из списка
-class DeleteNoticeItemUseCase {
+class DeleteNoticeItemUseCase(private val noticeListRepository: NoticeListRepository) {
     fun deleteNoticeItem(noticeItem: NoticeItem){
-        TODO()
+        noticeListRepository.deleteNoticeItem(noticeItem)
     }
 }
