@@ -1,5 +1,7 @@
 package com.example.reminder.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.reminder.domain.NoticeItem
 import com.example.reminder.domain.NoticeListRepository
 import java.util.Date
@@ -10,6 +12,8 @@ import java.util.Date
 // классы которые являются реализацией только 1го интерфейса пишутся с суффиксом Impl
 // Object является синглтоном, т.е. где бы мы не обратились к данному объекту, это будет один и тот же экземпляр
 object NoticeListRepositoryImpl : NoticeListRepository {
+
+    private val noticeListLD = MutableLiveData<List<NoticeItem>>()
 
     private val noticeList = mutableListOf<NoticeItem>()
 
@@ -27,10 +31,12 @@ object NoticeListRepositoryImpl : NoticeListRepository {
             noticeItem.id = autoIncrementId++
         }
         noticeList.add(noticeItem)
+        updateList()
     }
 
     override fun deleteNoticeItem(noticeItem: NoticeItem) {
         noticeList.remove(noticeItem)
+        updateList()
     }
 
     override fun editNoticeItem(noticeItem: NoticeItem) {
@@ -46,7 +52,12 @@ object NoticeListRepositoryImpl : NoticeListRepository {
         } ?: throw RuntimeException("Element with id $noticeItemId not found")
     }
 
-    override fun getNoticeList(): List<NoticeItem> {
-        return noticeList.toMutableList()
+    override fun getNoticeList(): LiveData<List<NoticeItem>> {
+        return noticeListLD
+    }
+
+    // метод для обновления LiveData
+    private fun updateList() {
+        noticeListLD.value = noticeList.toMutableList()
     }
 }

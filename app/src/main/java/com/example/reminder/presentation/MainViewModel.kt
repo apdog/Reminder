@@ -21,25 +21,14 @@ class MainViewModel : ViewModel() {
     private val deleteNoticeItemUseCase = DeleteNoticeItemUseCase(repository)
     private val editNoticeItemUseCase = EditeNoticeItemUseCase(repository)
 
-    val noticeList = MutableLiveData<List<NoticeItem>>()
-
-    // получим список элементов из UseCase и установим в LiveData
-    fun getNoticeList() {
-        val list = getNoticeListUseCase.getNoticeList()
-        noticeList.value = list
-    }
+    val noticeList = getNoticeListUseCase.getNoticeList()
 
     //для удаления элемента из списка
     fun deleteNoticeItem(noticeItem: NoticeItem) {
         deleteNoticeItemUseCase.deleteNoticeItem(noticeItem)
-        // обновляем список
-        getNoticeList()
     }
 
-    fun editNotice() {
-
-    }
-    //создаем копию объекта, с состоянием enabled false
+    //создаем копию объекта, с состоянием enabled false для отображения в другом виде
     fun changeEnabledState(noticeItem: NoticeItem) {
         val newItem = noticeItem.copy(enabled = !noticeItem.enabled)
         editNoticeItemUseCase.editNoticeItem(noticeItem)
