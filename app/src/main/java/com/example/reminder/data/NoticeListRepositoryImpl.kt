@@ -2,6 +2,8 @@ package com.example.reminder.data
 
 import com.example.reminder.domain.NoticeItem
 import com.example.reminder.domain.NoticeListRepository
+import java.util.Date
+
 // Data слой отвечает за работу с данными, он предоставляет конкретную реализацию репозитория
 // Data слой зависит от domain-слоя и знает о нем
 // Дата слой не знает ни чего о Дата слое и от него не зависет
@@ -12,6 +14,13 @@ object NoticeListRepositoryImpl : NoticeListRepository {
     private val noticeList = mutableListOf<NoticeItem>()
 
     private var autoIncrementId = 0
+    //создаем через блок init имровизированную БД
+    init {
+        for (i in 0 until 10) {
+            val item = NoticeItem("Name $i", "description", date = Date(), true, i)
+            addNoticeItem(item)
+        }
+    }
 
     override fun addNoticeItem(noticeItem: NoticeItem) {
         if(noticeItem.id == NoticeItem.UNDEFINED_ID) {
