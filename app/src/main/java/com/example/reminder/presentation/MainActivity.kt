@@ -3,28 +3,52 @@ package com.example.reminder.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.reminder.R
+import com.example.reminder.domain.NoticeItem
+import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
 
-    private var count = 0
+    private lateinit var llNoticeList: LinearLayoutCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        llNoticeList = findViewById(R.id.ll_notice_list)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.noticeList.observe(this) {
-            Log.d("MainActivityTest", it.toString())
-            if (count == 0) {
-                count++
-                val item = it[0]
-                viewModel.deleteNoticeItem(item)
-            }
+            showList(it)
+        }
+    }
 
+    private fun showList(list: List<NoticeItem>) {
+
+        llNoticeList.removeAllViews()
+        for(noticeItem in list) {
+            val layoutId = if (noticeItem.enabled) {
+                R.layout.item_notice_enabled
+            } else {
+                R.layout.item_notice_disabled
+            }
+            val view = LayoutInflater.from(this).inflate(layoutId, llNoticeList, false)
+            val tvName = view.findViewById<TextView>(R.id.tv_name)
+            val tvDescription = view.findViewById<TextView>(R.id.tv_description)
+            val tvDate = view.findViewById<TextView>(R.id.tv_date)
+            tvName.text = noticeItem.name
+            tvDescription.text = noticeItem.description
+            tvDate.text = noticeItem.date.toString()
+            view.setOnLongClickListener {
+                viewModel.changeEnabledState(noticeItem)
+                true
+            }
+            llNoticeList.addView(view)
         }
     }
 }

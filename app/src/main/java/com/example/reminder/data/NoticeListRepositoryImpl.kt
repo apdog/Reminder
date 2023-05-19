@@ -15,7 +15,7 @@ object NoticeListRepositoryImpl : NoticeListRepository {
 
     private val noticeListLD = MutableLiveData<List<NoticeItem>>()
 
-    private val noticeList = mutableListOf<NoticeItem>()
+    private val noticeList = sortedSetOf<NoticeItem>({ o1, o2 -> o1.id.compareTo(o2.id) })
 
     private var autoIncrementId = 0
     //создаем через блок init имровизированную БД
