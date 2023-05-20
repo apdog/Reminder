@@ -38,16 +38,6 @@ class MainActivity : AppCompatActivity() {
                 R.layout.item_notice_disabled
             }
             val view = LayoutInflater.from(this).inflate(layoutId, llNoticeList, false)
-            val tvName = view.findViewById<TextView>(R.id.tv_name)
-            val tvDescription = view.findViewById<TextView>(R.id.tv_description)
-            val tvDate = view.findViewById<TextView>(R.id.tv_date)
-            tvName.text = noticeItem.name
-            tvDescription.text = noticeItem.description
-            tvDate.text = noticeItem.date.toString()
-            view.setOnLongClickListener {
-                viewModel.changeEnabledState(noticeItem)
-                true
-            }
             llNoticeList.addView(view)
         }
     }
