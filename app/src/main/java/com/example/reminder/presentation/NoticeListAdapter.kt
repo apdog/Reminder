@@ -28,7 +28,6 @@ class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewH
     var onNoticeItemClickListener: ((NoticeItem) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoticeItemViewHolder {
-        Log.d("ShopListAdapter", "onCreateViewHolder, count: ${++count}")
         val layout = when (viewType) {
             VIEW_TYPE_DISABLED -> R.layout.item_notice_disabled
             VIEW_TYPE_ENABLED -> R.layout.item_notice_enabled
@@ -39,6 +38,7 @@ class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewH
     }
 
     override fun onBindViewHolder(viewHolder: NoticeItemViewHolder, position: Int) {
+        Log.d("ShopListAdapter", "onBindViewHolder, count: ${++count}")
         val noticeItem = noticeList[position]
         viewHolder.view.setOnLongClickListener {
             onNoticeItemLongClickListener?.invoke(noticeItem)
