@@ -1,11 +1,9 @@
 package com.example.reminder.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.reminder.data.NoticeListRepositoryImpl
 import com.example.reminder.domain.DeleteNoticeItemUseCase
-import com.example.reminder.domain.EditeNoticeItemUseCase
+import com.example.reminder.domain.EditNoticeItemUseCase
 import com.example.reminder.domain.GetNoticeListUseCase
 import com.example.reminder.domain.NoticeItem
 
@@ -16,21 +14,19 @@ import com.example.reminder.domain.NoticeItem
 class MainViewModel : ViewModel() {
 
     private val repository = NoticeListRepositoryImpl
-    // методы бизнес логики вызываются из UseCase (Interactors)
+
     private val getNoticeListUseCase = GetNoticeListUseCase(repository)
     private val deleteNoticeItemUseCase = DeleteNoticeItemUseCase(repository)
-    private val editNoticeItemUseCase = EditeNoticeItemUseCase(repository)
+    private val editNoticeItemUseCase = EditNoticeItemUseCase(repository)
 
     val noticeList = getNoticeListUseCase.getNoticeList()
 
-    //для удаления элемента из списка
-    fun deleteNoticeItem(noticeItem: NoticeItem) {
-        deleteNoticeItemUseCase.deleteNoticeItem(noticeItem)
+    fun deleteNoticeItem(shopItem: NoticeItem) {
+        deleteNoticeItemUseCase.deleteNoticeItem(shopItem)
     }
 
-    //создаем копию объекта, с состоянием enabled false для отображения в другом виде
-    fun changeEnabledState(noticeItem: NoticeItem) {
-        val newItem = noticeItem.copy(enabled = !noticeItem.enabled)
-        editNoticeItemUseCase.editNoticeItem(noticeItem)
+    fun changeEnableState(shopItem: NoticeItem) {
+        val newItem = shopItem.copy(enabled = !shopItem.enabled)
+        editNoticeItemUseCase.editNoticeItem(newItem)
     }
 }

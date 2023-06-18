@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.reminder.domain.NoticeItem
 import com.example.reminder.domain.NoticeListRepository
 import java.util.Date
+import kotlin.random.Random
 
 // Data слой отвечает за работу с данными, он предоставляет конкретную реализацию репозитория
 // Data слой зависит от domain-слоя и знает о нем
@@ -20,8 +21,8 @@ object NoticeListRepositoryImpl : NoticeListRepository {
     private var autoIncrementId = 0
     //создаем через блок init имровизированную БД
     init {
-        for (i in 0 until 10) {
-            val item = NoticeItem("Name $i", "description", date = Date(), true, i)
+        for (i in 0 until 100) {
+            val item = NoticeItem("Name $i", "description", date = Date(), Random.nextBoolean(), i)
             addNoticeItem(item)
         }
     }
