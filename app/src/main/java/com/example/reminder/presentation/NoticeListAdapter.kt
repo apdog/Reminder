@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.reminder.R
 import com.example.reminder.domain.NoticeItem
@@ -15,8 +16,10 @@ class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewH
     var count = 0
     var noticeList = listOf<NoticeItem>()
         set(value) {
+            val callback = NoticeListDiffCallback(noticeList, value)
+            val diffResult = DiffUtil.calculateDiff(callback)
+            diffResult.dispatchUpdatesTo(this)
             field = value
-            notifyDataSetChanged()
         }
 
     // лямбда функция для долгого слушателя ресайкл вью
