@@ -1,32 +1,17 @@
 package com.example.reminder.presentation
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.example.reminder.R
 import com.example.reminder.domain.NoticeItem
 
-class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewHolder>() {
-
-    var count = 0
-    var noticeList = listOf<NoticeItem>()
-        set(value) {
-            val callback = NoticeListDiffCallback(noticeList, value)
-            val diffResult = DiffUtil.calculateDiff(callback)
-            diffResult.dispatchUpdatesTo(this)
-            field = value
-        }
+class NoticeListAdapter : ListAdapter<NoticeItem, NoticeItemViewHolder>(NoticeItemDiffCallback()) {
 
     // лямбда функция для долгого слушателя ресайкл вью
     // в этой переменной лежит функция, которая принимает NoticeItem и ничего не возвращает,
     // Вэтой перемнной лежит либо функция в скобках, либо null
     var onNoticeItemLongClickListener: ((NoticeItem) -> Unit)? = null
-
     // лямбда функция для обычного слушателя ресайкл вью
     var onNoticeItemClickListener: ((NoticeItem) -> Unit)? = null
 
@@ -41,8 +26,7 @@ class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewH
     }
 
     override fun onBindViewHolder(viewHolder: NoticeItemViewHolder, position: Int) {
-        Log.d("ShopListAdapter", "onBindViewHolder, count: ${++count}")
-        val noticeItem = noticeList[position]
+        val noticeItem = getItem(position)
         viewHolder.view.setOnLongClickListener {
             onNoticeItemLongClickListener?.invoke(noticeItem)
             true
@@ -56,25 +40,8 @@ class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewH
         viewHolder.tvDate?.text = noticeItem.date.toString()
     }
 
-    override fun onViewRecycled(viewHolder: NoticeItemViewHolder) {
-        super.onViewRecycled(viewHolder)
-        viewHolder.tvName?.text = ""
-        viewHolder.tvDescription?.text = ""
-        viewHolder.tvDate?.text = ""
-        viewHolder.tvName?.setTextColor(
-            ContextCompat.getColor(
-                viewHolder.view.context,
-                android.R.color.white
-            )
-        )
-    }
-
-    override fun getItemCount(): Int {
-        return noticeList.size
-    }
-
     override fun getItemViewType(position: Int): Int {
-        val item = noticeList[position]
+        val item = getItem(position)
         return if (item.enabled) {
             VIEW_TYPE_ENABLED
         } else {
@@ -82,17 +49,9 @@ class NoticeListAdapter : RecyclerView.Adapter<NoticeListAdapter.NoticeItemViewH
         }
     }
 
-    class NoticeItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val tvName = view.findViewById<TextView>(R.id.tv_name)
-        val tvDescription = view.findViewById<TextView>(R.id.tv_description)
-        val tvDate = view.findViewById<TextView>(R.id.tv_date)
-    }
-
     companion object {
-
         const val VIEW_TYPE_ENABLED = 100
         const val VIEW_TYPE_DISABLED = 101
-
         const val MAX_POOL_SIZE = 30
     }
 }
