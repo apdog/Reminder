@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Reminder</string>
+    <string name="error_input_description">Error input description</string>
+    <string name="error_input_name">Error input name</string>
 </resources>
