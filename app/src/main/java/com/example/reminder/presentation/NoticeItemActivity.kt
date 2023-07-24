@@ -3,19 +3,13 @@ package com.example.reminder.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.reminder.R
 import com.example.reminder.domain.NoticeItem
-import com.google.android.material.textfield.TextInputLayout
 
 class NoticeItemActivity : AppCompatActivity() {
 
-//    private lateinit var viewModel: NoticeItemViewModel
+    //    private lateinit var viewModel: NoticeItemViewModel
 //
 //    private lateinit var tilName: TextInputLayout
 //    private lateinit var tilDescription: TextInputLayout
@@ -23,16 +17,16 @@ class NoticeItemActivity : AppCompatActivity() {
 //    private lateinit var etDescription: EditText
 //    private lateinit var buttonSave: Button
 //
-//    private var screenMode = MODE_UNKNOWN
-//    private var noticeItemId = NoticeItem.UNDEFINED_ID
+    private var screenMode = MODE_UNKNOWN
+    private var noticeItemId = NoticeItem.UNDEFINED_ID
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notice_item)
-//        parseIntent()
+        parseIntent()
 //        viewModel = ViewModelProvider(this)[NoticeItemViewModel::class.java]
 //        initViews()
 //        addTextChangedListeners()
-//        launchRightMode()
+        launchRightMode()
 //        observeViewModel()
 
     }
@@ -59,13 +53,18 @@ class NoticeItemActivity : AppCompatActivity() {
 //        }
 //    }
 //
-//    private fun launchRightMode() {
-//        when (screenMode) {
-//            MODE_EDIT -> launchEditMode()
-//            MODE_ADD -> launchAddMode()
-//        }
-//    }
-//
+private fun launchRightMode() {
+    val fragment = when (screenMode) {
+        MODE_EDIT -> NoticeItemFragment.newInstanceEditItem(noticeItemId)
+        MODE_ADD -> NoticeItemFragment.newInstanceAddItem()
+        else -> throw RuntimeException("Unknown screen mode $screenMode")
+    }
+    supportFragmentManager.beginTransaction()
+        .add(R.id.notice_item_container, fragment)
+        .commit()
+}
+
+    //
 //    private fun addTextChangedListeners() {
 //
 //        etName.addTextChangedListener(object : TextWatcher {
@@ -110,22 +109,22 @@ class NoticeItemActivity : AppCompatActivity() {
 //        }
 //    }
 //
-//    private fun parseIntent() {
-//        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
-//            throw RuntimeException("Param screen mode is absent")
-//        }
-//        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
-//        if (mode != MODE_EDIT && mode != MODE_ADD) {
-//            throw RuntimeException("Unknown screen mode $mode")
-//        }
-//        screenMode = mode
-//        if (screenMode == MODE_EDIT) {
-//            if (!intent.hasExtra(EXTRA_NOTICE_ITEM_ID)) {
-//                throw RuntimeException("Param notice item id is absent")
-//            }
-//            noticeItemId = intent.getIntExtra(EXTRA_NOTICE_ITEM_ID, NoticeItem.UNDEFINED_ID)
-//        }
-//    }
+    private fun parseIntent() {
+        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
+            throw RuntimeException("Param screen mode is absent")
+        }
+        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
+        if (mode != MODE_EDIT && mode != MODE_ADD) {
+            throw RuntimeException("Unknown screen mode $mode")
+        }
+        screenMode = mode
+        if (screenMode == MODE_EDIT) {
+            if (!intent.hasExtra(EXTRA_NOTICE_ITEM_ID)) {
+                throw RuntimeException("Param notice item id is absent")
+            }
+            noticeItemId = intent.getIntExtra(EXTRA_NOTICE_ITEM_ID, NoticeItem.UNDEFINED_ID)
+        }
+    }
 //
 //    private fun initViews() {
 //        tilName = findViewById(R.id.til_name)

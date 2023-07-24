@@ -1,7 +1,5 @@
 package com.example.reminder.presentation
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,10 +14,7 @@ import com.example.reminder.R
 import com.example.reminder.domain.NoticeItem
 import com.google.android.material.textfield.TextInputLayout
 
-class NoticeItemFragment(
-    private var screenMode: String = MODE_UNKNOWN,
-    private var noticeItemId: Int = NoticeItem.UNDEFINED_ID
-) : Fragment() {
+class NoticeItemFragment : Fragment() {
 
     private lateinit var viewModel: NoticeItemViewModel
 
@@ -29,17 +24,25 @@ class NoticeItemFragment(
     private lateinit var etDescription: EditText
     private lateinit var buttonSave: Button
 
+    private var screenMode: String = MODE_UNKNOWN
+    private var noticeItemId: Int = NoticeItem.UNDEFINED_ID
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_notice_item, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parseParams()
         viewModel = ViewModelProvider(this)[NoticeItemViewModel::class.java]
         initViews(view)
         addTextChangedListeners()
@@ -65,7 +68,7 @@ class NoticeItemFragment(
             tilName.error = message
         }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            finish()
+            activity?.onBackPressed()
         }
     }
 
@@ -121,11 +124,20 @@ class NoticeItemFragment(
     }
 
     private fun parseParams() {
-        if (screenMode != MODE_EDIT && screenMode != MODE_ADD) {
+        val args = requireArguments()
+        if (!args.containsKey(SCREEN_MODE)){
             throw RuntimeException("Param screen mode is absent")
         }
-        if (screenMode == MODE_EDIT && noticeItemId == NoticeItem.UNDEFINED_ID) {
-            throw RuntimeException("Param notice item id is absent")
+        val mode = args.getString(SCREEN_MODE)
+        if (mode != MODE_EDIT && mode != MODE_ADD) {
+            throw RuntimeException("Unknown screen mode $mode")
+        }
+        screenMode = mode
+        if (screenMode == MODE_EDIT) {
+            if (!args.containsKey(NOTICE_ITEM_ID)) {
+                throw RuntimeException("Param notice item id is absent")
+            }
+            noticeItemId = args.getInt(NOTICE_ITEM_ID, NoticeItem.UNDEFINED_ID)
         }
     }
 
@@ -138,23 +150,27 @@ class NoticeItemFragment(
     }
 
     companion object {
-        private const val EXTRA_SCREEN_MODE = "extra_mode"
-        private const val EXTRA_NOTICE_ITEM_ID = "extra_notice_item_id"
+        private const val SCREEN_MODE = "extra_mode"
+        private const val NOTICE_ITEM_ID = "extra_notice_item_id"
         private const val MODE_EDIT = "mode_edit"
         private const val MODE_ADD = "mode_add"
         private const val MODE_UNKNOWN = ""
 
-        fun newIntentAddItem(context: Context): Intent {
-            val intent = Intent(context, NoticeItemActivity::class.java)
-            intent.putExtra(EXTRA_SCREEN_MODE, MODE_ADD)
-            return intent
+        fun newInstanceAddItem(): NoticeItemFragment {
+            return NoticeItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_ADD)
+                }
+            }
         }
 
-        fun newIntentEditItem(context: Context, noticeItemId: Int): Intent {
-            val intent = Intent(context, NoticeItemActivity::class.java)
-            intent.putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
-            intent.putExtra(EXTRA_NOTICE_ITEM_ID, noticeItemId)
-            return intent
+        fun newInstanceEditItem(noticeItemId: Int): NoticeItemFragment {
+            return NoticeItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_EDIT)
+                    putInt(NOTICE_ITEM_ID, noticeItemId)
+                }
+            }
         }
     }
 }
