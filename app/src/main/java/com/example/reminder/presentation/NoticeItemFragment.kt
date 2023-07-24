@@ -1,5 +1,6 @@
 package com.example.reminder.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +18,7 @@ import com.google.android.material.textfield.TextInputLayout
 class NoticeItemFragment : Fragment() {
 
     private lateinit var viewModel: NoticeItemViewModel
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private lateinit var tilName: TextInputLayout
     private lateinit var tilDescription: TextInputLayout
@@ -27,6 +29,14 @@ class NoticeItemFragment : Fragment() {
     private var screenMode: String = MODE_UNKNOWN
     private var noticeItemId: Int = NoticeItem.UNDEFINED_ID
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw java.lang.RuntimeException("Activity must implement OnEditingFinishedListener")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
@@ -68,7 +78,7 @@ class NoticeItemFragment : Fragment() {
             tilName.error = message
         }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -147,6 +157,9 @@ class NoticeItemFragment : Fragment() {
         etName = view.findViewById(R.id.et_name)
         etDescription = view.findViewById(R.id.et_desc)
         buttonSave = view.findViewById(R.id.save_button)
+    }
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 
     companion object {

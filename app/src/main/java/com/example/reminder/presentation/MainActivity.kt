@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.reminder.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NoticeItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var noticeListAdapter: NoticeListAdapter
@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success!", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
+    }
     private fun isOnePaneMode(): Boolean {
         return noticeItemContainer == null
     }

@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.reminder.R
 import com.example.reminder.domain.NoticeItem
 
-class NoticeItemActivity : AppCompatActivity() {
+class NoticeItemActivity : AppCompatActivity(), NoticeItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var noticeItemId = NoticeItem.UNDEFINED_ID
@@ -69,5 +69,9 @@ class NoticeItemActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_NOTICE_ITEM_ID, noticeItemId)
             return intent
         }
+    }
+
+    override fun onEditingFinished() {
+        finish()
     }
 }
