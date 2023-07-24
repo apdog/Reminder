@@ -4,6 +4,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/notice_item_container"
     tools:layout="@layout/fragment_notice_item"
     tools:context=".presentation.MainActivity"/>

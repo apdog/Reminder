@@ -3,6 +3,8 @@ package com.example.reminder.presentation
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -13,10 +15,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var noticeListAdapter: NoticeListAdapter
+    private var noticeItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        noticeItemContainer = findViewById(R.id.notice_item_container)
         setupRecyclerView()
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.noticeList.observe(this) {
@@ -24,9 +28,25 @@ class MainActivity : AppCompatActivity() {
         }
         val buttonAddItem = findViewById<FloatingActionButton>(R.id.button_add_notice_item)
         buttonAddItem.setOnClickListener {
-            val intent = NoticeItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+            if (isOnePaneMode()) {
+                val intent = NoticeItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            } else {
+                launchFragment(NoticeItemFragment.newInstanceAddItem())
+            }
         }
+    }
+
+    private fun isOnePaneMode(): Boolean {
+        return noticeItemContainer == null
+    }
+
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.notice_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupRecyclerView() {
@@ -80,9 +100,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListener() {
         noticeListAdapter.onNoticeItemClickListener = {
-            Toast.makeText(this, it.name, Toast.LENGTH_SHORT).show()
-            val intent = NoticeItemActivity.newIntentEditItem(this, it.id)
-            startActivity(intent)
+            if (isOnePaneMode()) {
+                val intent = NoticeItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            } else {
+                launchFragment(NoticeItemFragment.newInstanceEditItem(it.id))
+            }
+
         }
     }
 
